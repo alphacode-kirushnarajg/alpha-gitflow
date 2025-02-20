@@ -19,9 +19,9 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ github.event.workflow_run.id }}
           name: vitest
-          path: ./.testing
+          path: ./coverage
 
       - name: Report coverage
         uses: davelosert/vitest-coverage-report-action@v2
         with:
-          json-summary-compare-path: coverage-main/coverage-summary.json
+          json-summary-compare-path: coverage/coverage-summary.json
