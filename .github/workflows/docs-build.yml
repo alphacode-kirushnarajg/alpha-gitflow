@@ -23,22 +23,8 @@ jobs:
   build-pages:
     runs-on: ${{ fromJSON(inputs.operating-systems)[0] }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          run_install: false
-
-      - name: Setup node.js ${{ inputs.node-version }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ inputs.node-version }}
-          cache: ${{ inputs.node-caching }}
-
-      - name: Install dependencies
-        run: pnpm install
+      - name: Run pre build script
+        uses: .github/actions/install-pre-commit@main
 
       - name: Build storybook
         run: pnpm build:storybook
