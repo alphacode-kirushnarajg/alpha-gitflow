@@ -1,8 +1,8 @@
-name: unit testing
+name: unit testing coverage report
 
 on:
   workflow_call:
-    workflows: ["unit testing"]
+    workflows: ["unit testing code coverage"]
     types:
       - completed
     inputs:
@@ -14,11 +14,7 @@ on:
 
 jobs:
   test:
-    runs-on: ${{ matrix.operating-systems }}
-    strategy:
-      fail-fast: false
-      matrix:
-        operating-systems: ${{ inputs.operating-systems }}
+    runs-on: ${{ input.operating-systems }}
 
   report:
     needs: test
@@ -36,4 +32,3 @@ jobs:
         uses: davelosert/vitest-coverage-report-action@v2
         with:
           json-summary-compare-path: coverage-main/coverage-summary.json
-          
