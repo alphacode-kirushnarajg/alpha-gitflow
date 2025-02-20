@@ -24,7 +24,7 @@ jobs:
     runs-on: ${{ fromJSON(inputs.operating-systems)[0] }}
     steps:
       - name: Run pre build script
-        uses: .github/actions/install-pre-commit@main
+        uses: alphacode-kirushnarajg/alpha-gitflow/.github/actions/install-pre-commit@main
 
       - name: Build storybook
         run: pnpm build:storybook
