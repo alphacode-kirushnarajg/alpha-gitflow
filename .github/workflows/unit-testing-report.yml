@@ -11,10 +11,6 @@ on:
 
 jobs:
   coverage-report:
-    strategy:
-      fail-fast: false
-      matrix:
-        node-version: ${{ fromJSON(inputs.node-version) }}
     runs-on: ${{ fromJSON(inputs.operating-systems)[0] }}
     steps:
       - name: Download coverage artifacts
