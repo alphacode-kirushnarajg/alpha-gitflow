@@ -2,9 +2,6 @@ name: unit testing coverage report
 
 on:
   workflow_call:
-    workflows: ["unit testing code coverage"]
-    types:
-      - completed
     inputs:
       operating-systems:
         description: "Optional input to set a list of operating systems which the workflow uses."
