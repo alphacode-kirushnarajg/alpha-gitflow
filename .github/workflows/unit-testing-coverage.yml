@@ -26,8 +26,7 @@ on:
 
 jobs:
   test:
-    runs-on: ${{ input.operating-systems }}
-
+    runs-on: ${{ fromJSON(input.operating-systems)[0] }}
     steps:
       - name: checkout
         uses: actions/checkout@v4
