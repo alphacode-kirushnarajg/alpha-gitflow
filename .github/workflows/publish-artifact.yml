@@ -1,0 +1,79 @@
+name: unit testing code coverage
+
+on:
+  workflow_call:
+    inputs:
+      operating-systems:
+        description: "Optional input to set a list of operating systems which the workflow uses."
+        required: false
+        type: string
+        default: "['ubuntu-latest']"
+      node-version:
+        description: "Optional input to set the version of Node.js used to build the project."
+        required: false
+        type: string
+        default: '22.x'
+      node-caching:
+        description: "Optional input to set up caching for the setup-node action."
+        required: false
+        type: string
+        default: 'pnpm'
+
+jobs:
+  skins-deploy:
+    runs-on: ubuntu-latest
+    needs: skins-build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: skins
+          path: ./dist
+
+      - name: Set environment variables for deployment
+        run: |
+          git fetch --tags
+          TAG=$(git describe --tags --abbrev=0 || echo "no-tag")
+          echo "RELEASE_TAG=${TAG}" >> ${GITHUB_ENV}
+
+      - name: Alpha S3 Actions
+        uses: alphacode-kirushnarajg/Alpha-S3-Action@v0.1.6-alpha
+        with:
+          sftp_username: ${{ secrets.SFTP_USER_NAME }}
+          sftp_server: ${{ secrets.SFTP_HOST_NAME }}
+          sftp_password: ${{ secrets.SFTP_PASSWORD }}
+          local_source_path: './dist/*'
+          remote_destination_path: './skins/${{ env.RELEASE_TAG }}/'
+          sftp_extra_args: '-o ConnectTimeout=5'
+
+  shell-deploy:
+    runs-on: ubuntu-latest
+    needs: shell-build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: shell
+          path: ./build
+
+      - name: Set environment variables for deployment
+        run: |
+          git fetch --tags
+          TAG=$(git describe --tags --abbrev=0 || echo "no-tag")
+          echo "RELEASE_TAG=${TAG}" >> ${GITHUB_ENV}
+
+      - name: Alpha S3 Actions
+        uses: alphacode-kirushnarajg/Alpha-S3-Action@v0.1.6-alpha
+        with:
+          sftp_username: ${{ secrets.SFTP_USER_NAME }}
+          sftp_server: ${{ secrets.SFTP_HOST_NAME }}
+          sftp_password: ${{ secrets.SFTP_PASSWORD }}
+          local_source_path: './build/*'
+          remote_destination_path: './shell/${{ env.RELEASE_TAG }}/'
+          sftp_extra_args: '-o ConnectTimeout=5'
