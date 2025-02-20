@@ -23,28 +23,8 @@ jobs:
   code-coverage:
     runs-on: ${{ fromJSON(inputs.operating-systems)[0] }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          run_install: false
-
-      - name: Setup node.js ${{ inputs.node-version }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ inputs.node-version }}
-          cache: ${{ inputs.node-caching }}
-
-      - name: Install dependencies
-        run: pnpm install
-
-      - name: Run commit linter
-        run: pnpm prepare
-
-      - name: Run linter
-        run: pnpm run lint
+      - name: Run pre build script
+        uses: alphacode-kirushnarajg/alpha-gitflow/.github/actions/install-pre-commit@main
 
       - name: Unit testing
         run: pnpm vitest --coverage.enabled true
