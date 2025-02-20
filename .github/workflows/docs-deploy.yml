@@ -1,0 +1,24 @@
+name: unit testing coverage report
+
+on:
+  workflow_call:
+    inputs:
+      operating-systems:
+        description: "Optional input to set a list of operating systems which the workflow uses."
+        required: false
+        type: string
+        default: "['ubuntu-latest']"
+
+jobs:
+  pages-deploy:
+    runs-on: ${{ fromJSON(inputs.operating-systems)[0] }}
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: storybook
+        uses: actions/deploy-pages@v4

@@ -20,7 +20,7 @@ on:
         default: 'pnpm'
 
 jobs:
-  code-coverage:
+  build-pages:
     runs-on: ${{ fromJSON(inputs.operating-systems)[0] }}
     steps:
       - name: Checkout
@@ -40,17 +40,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Run commit linter
-        run: pnpm prepare
+      - name: Build storybook
+        run: pnpm build-storybook
 
-      - name: Run linter
-        run: pnpm run lint
-
-      - name: Unit testing
-        run: pnpm vitest --coverage.enabled true
-
-      - name: Upload coverage
-        uses: actions/upload-artifact@v4
+      - name: Upload build artifact
+        id: storybook
+        uses: actions/upload-pages-artifact@v3
         with:
-          name: coverage
-          path: ./.testing/coverage
+          path: ./dist/storybook
