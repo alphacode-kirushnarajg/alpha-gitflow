@@ -18,9 +18,13 @@ on:
         required: false
         type: string
         default: 'pnpm'
+    secrets:
+      NODE_AUTH_TOKEN:
+        description: "Required to publish to npm registry"
+        required: false
 
 jobs:
-  skins-build:
+  publish:
     runs-on: ${{ fromJSON(inputs.operating-systems)[0] }}
     steps:
       - name: Checkout
@@ -29,6 +33,7 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
+          node-version: 10
           run_install: false
 
       - name: Install node.js ${{ inputs.node-version }}
@@ -36,52 +41,19 @@ jobs:
         with:
           node-version: ${{ inputs.node-version }}
           cache: ${{ inputs.node-caching }}
+          registry-url: https://registry.npmjs.org
 
       - name: Install dependencies
         run: pnpm install
 
-      - name: Run commit linter
-        run: pnpm prepare
-
-      - name: Run linter
-        run: pnpm run lint        
-
-      - name: Run build skins
-        run: pnpm build:skins
-
-      - name: Package into artifact
-        run: |
-          cd dist
-          pnpm pack
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: skins
-          path: ./dist/qbit.design-skins-*.tgz
-
-  shell-build:
-    runs-on: ${{ fromJSON(inputs.operating-systems)[0] }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          run_install: false
-
-      - name: Install Node.js ${{ inputs.node-version }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ inputs.node-version }}
-          cache: ${{ inputs.node-caching }}
-
-      - name: Install dependencies
-        run: pnpm install
-
-      - name: Rub build components
+      - name: Build skins
         run: pnpm build:components
+
+      - name: Publish to NPM registry
+        shell: bash
+        run: pnpm publish ./dist --access public --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
