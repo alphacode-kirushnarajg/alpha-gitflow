@@ -41,7 +41,7 @@ jobs:
         run: pnpm install
 
       - name: Build storybook
-        run: pnpm build-storybook
+        run: pnpm build:storybook
 
       - name: Upload build artifact
         id: storybook
