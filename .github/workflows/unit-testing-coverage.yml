@@ -28,38 +28,33 @@ jobs:
   test:
     runs-on: ${{ fromJSON(inputs.operating-systems)[0] }}
     steps:
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: install pnpm
+      - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
           run_install: false
 
-      - name: setup node.js ${{ inputs.node-version }}
+      - name: Setup node.js ${{ inputs.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ inputs.node-version }}
           cache: ${{ inputs.node-caching }}
 
-      - name: install dependencies
+      - name: Install dependencies
         run: pnpm install
 
-      - name: run commit linter
+      - name: Run commit linter
         run: pnpm prepare
 
-      - name: run linter
+      - name: Run linter
         run: pnpm run lint
 
-      - name: unit testing
+      - name: Unit testing
         run: pnpm vitest --coverage.enabled true
 
-      - name: build
-        run: |
-          pnpm build:skins
-          pnpm build:components
-
-      - name: upload coverage
+      - name: Upload coverage
         uses: actions/upload-artifact@v4
         with:
           name: vitest
