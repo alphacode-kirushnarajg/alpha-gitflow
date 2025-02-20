@@ -10,7 +10,7 @@ on:
         default: "['ubuntu-latest']"
 
 jobs:
-  report:
+  coverage-report:
     runs-on: ${{ fromJSON(inputs.operating-systems)[0] }}
     steps:
       - name: Download coverage artifacts

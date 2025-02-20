@@ -25,7 +25,7 @@ on:
         default: true
 
 jobs:
-  test:
+  code-coverage:
     runs-on: ${{ fromJSON(inputs.operating-systems)[0] }}
     steps:
       - name: Checkout
